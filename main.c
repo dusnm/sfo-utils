@@ -27,7 +27,7 @@ static void print_help()
         "\n"
         "Usage: sfo-utils [option] [argument]\n"
         "\n"
-        "  -r <argument>,   Reads the supplied PARAM.sfo file and outputs it to stdout.\n"
+        "  -r <argument>,   Reads the supplied PARAM.SFO file and outputs it to stdout.\n"
         "  -h,              Prints this help dialog.\n";
 
     fprintf(stdout, "%s", help);
@@ -45,16 +45,15 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    while ((option = getopt(argc, argv, "rh:")) != -1)
+    while ((option = getopt(argc, argv, "r:h")) != -1)
     {
         char       path[PATH_MAX];
         char       *realpath_result;
-        const char *path_argument_value = argv[2];
 
         switch (option)
         {
         case 'r':
-            realpath_result = realpath(path_argument_value, path);
+            realpath_result = realpath(optarg, path);
 
             if (!realpath_result)
             {
@@ -67,7 +66,7 @@ int main(int argc, char *argv[])
 
             if (NULL == sfo_file)
             {
-                fprintf(stderr, "There was an error reading the file.\n");
+                fprintf(stderr, "There was an error while opening the file. Make you sure that the file exists and that you have the required permissions.\n");
 
                 exit(EXIT_FAILURE);
             }
@@ -80,8 +79,6 @@ int main(int argc, char *argv[])
 
             exit(EXIT_SUCCESS);
         default:
-            fprintf(stderr, "Incorrect argument provided, for help use -h.\n");
-
             exit(EXIT_FAILURE);
         }
     }

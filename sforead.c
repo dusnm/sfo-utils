@@ -40,6 +40,14 @@ void sforead(FILE *sfo_file)
 
     sfo_header = parse_sfo_header(sfo_file);
 
+    if (SFO_HEADER_MAGIC_VALUE != sfo_header.magic)
+    {
+        fclose(sfo_file);
+        fprintf(stderr, "The file doesn't appear to be an SFO file or is corrupted.\n");
+
+        exit(EXIT_FAILURE);
+    }
+
     uint32_t tables_entries   = sfo_header.tables_entries;
     uint32_t key_table_start  = sfo_header.key_table_start;
     uint32_t data_table_start = sfo_header.data_table_start;
@@ -71,7 +79,10 @@ void sforead(FILE *sfo_file)
 
     fclose(sfo_file);
 
-    if (STATUS_SUCCESS != key_table_status && STATUS_SUCCESS != data_table_status)
+    if (
+            STATUS_SUCCESS != key_table_status ||
+            STATUS_SUCCESS != data_table_status
+       )
     {
         fprintf(stderr, "There was an error reading the file.\n");
 
