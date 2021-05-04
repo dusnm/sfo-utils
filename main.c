@@ -27,38 +27,43 @@ static void print_help()
         "\n"
         "Usage: sfo-utils [option] [argument]\n"
         "\n"
-        "  -r <argument>,   Reads the supplied PARAM.SFO file and outputs it to stdout.\n"
-        "  -h,              Prints this help dialog.\n";
+        "  -r <file path>, Reads the supplied PARAM.SFO file and outputs it to stdout.\n"
+        "  -j,             Formats the output as JSON instead of an unformatted string.\n"
+        "  -h,             Prints this help dialog.\n";
 
     fprintf(stdout, "%s", help);
 }
 
 int main(int argc, char *argv[])
 {
-    int          option;
-    FILE         *sfo_file;
+    FILE *sfo_file;
+    int  option;
+    int  file_mode;
+    int  output_format = OUTPUT_FORMAT_STRING;
 
     if (argc < 2)
     {
         fprintf(stderr, "Not enough arguments, at least one is required. See -h for help.\n");
-
         exit(EXIT_FAILURE);
     }
 
-    while ((option = getopt(argc, argv, "r:h")) != STATUS_FAILURE)
+    while ((option = getopt(argc, argv, "hr:j")) != -1)
     {
         char       path[PATH_MAX];
         char       *realpath_result;
 
         switch (option)
         {
+        case 'h':
+            print_help();
+            exit(EXIT_SUCCESS);
         case 'r':
+            file_mode = FILE_MODE_BINARY_READ;
             realpath_result = realpath(optarg, path);
 
             if (!realpath_result)
             {
                 fprintf(stderr, "Incorrect file path given, make sure it's correct.\n");
-
                 exit(EXIT_FAILURE);
             }
 
@@ -67,20 +72,28 @@ int main(int argc, char *argv[])
             if (NULL == sfo_file)
             {
                 fprintf(stderr, "There was an error while opening the file. Make you sure that the file exists and that you have the required permissions.\n");
-
                 exit(EXIT_FAILURE);
             }
-
-            sforead(sfo_file);
-
-            exit(EXIT_SUCCESS);
-        case 'h':
-            print_help();
-
-            exit(EXIT_SUCCESS);
+            break;
+        case 'j':
+            output_format = OUTPUT_FORMAT_JSON;
+            break;
         default:
             exit(EXIT_FAILURE);
         }
+    }
+
+    switch (file_mode)
+    {
+    case FILE_MODE_BINARY_READ:
+        sforead(sfo_file, output_format);
+        break;
+    case FILE_MODE_BINARY_WRITE:
+        // TODO: Implement this
+        break;
+    default:
+        fprintf(stderr, "No file supplied for reading or writing, aborting.\n");
+        exit(EXIT_FAILURE);
     }
 
     return EXIT_SUCCESS;

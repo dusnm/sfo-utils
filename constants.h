@@ -44,4 +44,9 @@
 #define STATUS_SUCCESS                       0x00
 #define STATUS_FAILURE                       -0x01
 
+#define FILE_MODE_BINARY_READ                0x00
+#define FILE_MODE_BINARY_WRITE               0x01
+#define OUTPUT_FORMAT_STRING                 0x00
+#define OUTPUT_FORMAT_JSON                   0x01
+
 #endif

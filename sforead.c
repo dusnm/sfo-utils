@@ -15,6 +15,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 #include "sforead.h"
+#include "lib/parson/parson.h"
 
 /* Print the parsed data */
 static void print_result(
@@ -34,7 +35,62 @@ static void print_result(
     }
 }
 
-void sforead(FILE *sfo_file)
+static void print_result_as_json(
+    uint32_t                number_of_entries,
+    sfo_index_table_entry_t sfo_index_table_entries[],
+    sfo_key_table_entry_t   sfo_key_table_entries[],
+    sfo_data_table_entry_t  sfo_data_table_entries[]
+)
+{
+    JSON_Value  *root_value = json_value_init_object();
+    JSON_Object *root_object = json_value_get_object(root_value);
+    char        *serialized_string = NULL;
+
+    for (uint32_t i = 0; i < number_of_entries; i++)
+    {
+        sfo_index_table_entry_t sfo_index_table_entry = sfo_index_table_entries[i];
+        sfo_key_table_entry_t   sfo_key_table_entry = sfo_key_table_entries[i];
+        sfo_data_table_entry_t  sfo_data_table_entry = sfo_data_table_entries[i];
+
+        switch (sfo_index_table_entry.data_fmt)
+        {
+        case SFO_DATA_TABLE_PARAM_UTF8:
+            json_object_set_string(
+                root_object,
+                sfo_key_table_entry.key,
+                sfo_data_table_entry.data
+            );
+            break;
+        case SFO_DATA_TABLE_PARAM_UTF8S:
+            json_object_set_string(
+                root_object,
+                sfo_key_table_entry.key,
+                sfo_data_table_entry.data
+            );
+            break;
+        case SFO_DATA_TABLE_PARAM_UINT32:
+            json_object_set_number(
+                root_object,
+                sfo_key_table_entry.key,
+                atoi(sfo_data_table_entry.data)
+            );
+            break;
+        default:
+            json_free_serialized_string(serialized_string);
+            json_value_free(root_value);
+            exit(EXIT_FAILURE);
+        }
+    }
+
+    serialized_string = json_serialize_to_string_pretty(root_value);
+
+    fprintf(stdout, "%s\n", serialized_string);
+
+    json_free_serialized_string(serialized_string);
+    json_value_free(root_value);
+}
+
+void sforead(FILE *sfo_file, int output_format)
 {
     sfo_header_t sfo_header;
 
@@ -89,9 +145,22 @@ void sforead(FILE *sfo_file)
         exit(EXIT_FAILURE);
     }
 
-    print_result(
-        tables_entries,
-        sfo_key_table_entries,
-        sfo_data_table_entries
-    );
+    switch (output_format)
+    {
+    case OUTPUT_FORMAT_STRING:
+        print_result(
+            tables_entries,
+            sfo_key_table_entries,
+            sfo_data_table_entries
+        );
+        break;
+    case OUTPUT_FORMAT_JSON:
+        print_result_as_json(
+            tables_entries,
+            sfo_index_table_entries,
+            sfo_key_table_entries,
+            sfo_data_table_entries
+        );
+        break;
+    }
 }
