@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    while ((option = getopt(argc, argv, "r:h")) != -1)
+    while ((option = getopt(argc, argv, "r:h")) != STATUS_FAILURE)
     {
         char       path[PATH_MAX];
         char       *realpath_result;
