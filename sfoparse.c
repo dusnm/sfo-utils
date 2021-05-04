@@ -40,7 +40,7 @@ void parse_sfo_index_table_entries(
     /* Move the pointer to the beginning of the index_table */
     fseek(sfo_file, SFO_INDEX_TABLE_START_OFFSET, SEEK_SET);
 
-    for (int i = 0; i < number_of_entries; i++)
+    for (uint32_t i = 0; i < number_of_entries; i++)
     {
         fread(&sfo_index_table_entries[i].key_offset,   SFO_INDEX_TABLE_KEY_OFFSET_SIZE,   1, sfo_file);
         fread(&sfo_index_table_entries[i].data_fmt,     SFO_INDEX_TABLE_DATA_FMT_SIZE,     1, sfo_file);
@@ -60,7 +60,7 @@ int parse_sfo_key_table_entries(
     /* Move the file pointer to the beginning of key_table */
     fseek(sfo_file, starting_offset, SEEK_SET);
 
-    for (int i = 0; i < number_of_entries; i++)
+    for (uint32_t i = 0; i < number_of_entries; i++)
     {
         int  j = 0;
         char ch;
@@ -95,7 +95,7 @@ int parse_sfo_data_table_entries(
     sfo_data_table_entry_t  sfo_data_table_entries[]
 )
 {
-    for (int i = 0; i < number_of_entries; i++)
+    for (uint32_t i = 0; i < number_of_entries; i++)
     {
         uint16_t data_fmt = sfo_index_table_entries[i].data_fmt;
         uint32_t data_len = sfo_index_table_entries[i].data_len;
