@@ -21,6 +21,6 @@
 #ifndef SFOREAD_H
 #define SFOREAD_H
 
-void sforead(FILE *sfo_file, int output_format);
+void sforead(FILE *sfo_file);
 
 #endif

@@ -1,0 +1,10 @@
+{
+  "files.associations": {
+    "*.module": "php",
+    "*.html": "twig",
+    ".env.development": "env",
+    ".env.production": "env",
+    ".env.example": "env",
+    "sfoparse.h": "c"
+  }
+}
