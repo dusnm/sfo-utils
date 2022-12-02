@@ -5,6 +5,7 @@
     ".env.development": "env",
     ".env.production": "env",
     ".env.example": "env",
-    "sfoparse.h": "c"
+    "sfoparse.h": "c",
+    "cmd.h": "c"
   }
 }
