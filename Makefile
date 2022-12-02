@@ -1,14 +1,14 @@
-output: main.o sforead.o sfoparse.o
-	gcc main.o sforead.o sfoparse.o -o sfo-utils -O3
+output: main.o read.o parse.o
+	gcc main.o read.o parse.o -o sfo-utils -O3
 
-main.o: main.c
+main.o:
 	gcc -c main.c
 
-sforead.o: sforead.c
-	gcc -c sforead.c
+read.o:
+	gcc -c src/read/read.c
 
-sfoparse.o: sfoparse.c
-	gcc -c sfoparse.c
+parse.o:
+	gcc -c src/parse/parse.c
 
 clean:
 	rm *.o
